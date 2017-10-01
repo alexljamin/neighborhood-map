@@ -59,22 +59,24 @@ function initMap() {
 
       //show infowindow when clicking on the marker
       marker.addListener('click', function(){
+        var self = this;
         populateInfoWindow(this, largeInfowindow);
+        // toggleBounce(self);
       });
       //marker will bounce for 2s when clicked
       marker.addListener('click', toggleBounce);
 
-      function toggleBounce(marker) {
-        var self = this;
-        self.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(function() {
-            self.setAnimation(null);
-        }, 2000);
-      }
-
       bounds.extend(markers[i].position);
     }
     map.fitBounds(bounds);
+}
+
+function toggleBounce(marker) {
+  var self = this;
+  self.setAnimation(google.maps.Animation.BOUNCE);
+  setTimeout(function() {
+      self.setAnimation(null);
+  }, 2000);
 }
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
