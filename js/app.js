@@ -54,7 +54,7 @@ function initMap() {
         animation: google.maps.Animation.DROP,
         id: i,
         foursquareID: foursquareID
-      })
+      });
       markers.push(marker);
 
       //show infowindow when clicking on the marker
@@ -62,13 +62,16 @@ function initMap() {
         populateInfoWindow(this, largeInfowindow);
       });
       //marker will bounce for 2s when clicked
-      marker.addListener('click', function(){
+      marker.addListener('click', toggleBounce);
+
+      function toggleBounce(marker) {
         var self = this;
         self.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(function(){
-          self.setAnimation(null);
-        }, 2000)
-      });
+        setTimeout(function() {
+            self.setAnimation(null);
+        }, 2000);
+      }
+
       bounds.extend(markers[i].position);
     }
     map.fitBounds(bounds);
@@ -85,7 +88,7 @@ function populateInfoWindow(marker, infowindow) {
 
     //marker will stop bouncing when infowindow is closed
     infowindow.addListener('closeclick',function(){
-      marker.setAnimation(null)
+      marker.setAnimation(null);
     });
   }
 
@@ -118,12 +121,8 @@ mapError = function() {
   alert("The Google Maps API didn't load correctly. Please try again later.");
 };
 
-var place = function(data){
-  this.title = ko.observable(data.title);
-}
-
 var viewModel = function(){
-
+  this.title = ko.observable(data.title);
   this.filter = ko.observable('');
 
   //show the list of all the places
