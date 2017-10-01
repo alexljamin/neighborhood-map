@@ -38,8 +38,6 @@ function initMap() {
       zoomControl: true
     });
 
-    
-
     var largeInfowindow = new google.maps.InfoWindow();
     var bounds = new google.maps.LatLngBounds();
 
@@ -57,27 +55,31 @@ function initMap() {
       });
       markers.push(marker);
 
-      //show infowindow when clicking on the marker
-      marker.addListener('click', function(){
-        var self = this;
-        populateInfoWindow(this, largeInfowindow);
-        // toggleBounce(self);
-      });
-      //marker will bounce for 2s when clicked
+      marker.addListener('click', markerWindow);
       marker.addListener('click', toggleBounce);
 
       bounds.extend(markers[i].position);
     }
+
+    //show infowindow when clicking on the marker
+    function markerWindow(){
+      var marker = this;
+      populateInfoWindow(this, largeInfowindow);
+    }
+
+    //marker will bounce for 2s when clicked
+    function toggleBounce(marker) {
+      var self = this;
+      self.setAnimation(google.maps.Animation.BOUNCE);
+      setTimeout(function() {
+          self.setAnimation(null);
+      }, 2000);
+    }
+
     map.fitBounds(bounds);
 }
 
-function toggleBounce(marker) {
-  var self = this;
-  self.setAnimation(google.maps.Animation.BOUNCE);
-  setTimeout(function() {
-      self.setAnimation(null);
-  }, 2000);
-}
+
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
