@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+*{font-family:'Roboto', sans-serif}
+html, body { 
+    height: 100%; 
+    margin: 0; 
+    padding: 0;
+}
+#map {height: 100%;}
+header{
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    z-index: 99999;
+    background-color: #ffffff;
+    padding: 1%;
+    margin:0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 -1px 0px rgba(0,0,0,0.02);
+    border-radius: 2px 2px 0 0;
+}
+h4{margin-top: 0;}
+input{
+    padding: 5%;
+    border-top: 0;
+    border-right: 0;
+    border-bottom-width: 1px;
+    border-left:0;
+}
+input:focus{outline:none;}
+input::placeholder{
+    font: 15px 'Roboto', sans-serif;
+    opacity: 0.5;
+}
+@media (max-width: 768px){
+
+}

@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+    <title>Grab a coffee in Adelaide</title>
+</head>
+<body>
+
+    <header>
+        <h4>Coffee places in Adelaide</h4>
+        <input type="text" placeholder="Filter places" autofocus="autofocus" data-bind="textInput: filter">
+        <ul data-bind="foreach: visibleLocations">
+            <li data-bind="text: title"></li>
+        </ul>
+    </header>
+
+    <section id="map"></section>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCFuYkDBW78gZjqi-sfr4obkXSBLk9z6ak&callback=initMap" onerror="mapError()"> </script>
+    <script async defer src="js/lib/knockout.js"></script>
+    <script async defer src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script async defer src="js/app.js"></script>
+</body>
+</html>
