@@ -19,17 +19,25 @@ header{
 }
 h4{margin-top: 0;}
 input{
-    padding: 5%;
+    padding: 0 0 5%;
+    margin-bottom: 5%;
     border-top: 0;
     border-right: 0;
     border-bottom-width: 1px;
     border-left:0;
+    width: 100%;
 }
 input:focus{outline:none;}
 input::placeholder{
     font: 15px 'Roboto', sans-serif;
     opacity: 0.5;
 }
+ul{
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+li{cursor: pointer;}
 @media (max-width: 768px){
 
 }

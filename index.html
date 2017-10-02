@@ -10,9 +10,10 @@
 
     <header>
         <h4>Coffee places in Adelaide</h4>
-        <input type="search" placeholder="Filter places" autofocus="autofocus" data-bind="value: filter, valueUpdate: 'afterkeydown'" autocomplete="off">
-        <ul data-bind="foreach: visibleLocations">
+        <input type="text" placeholder="Filter places by name" autofocus="autofocus" data-bind="textInput: query, event: {keyup: filter}" autocomplete="off">
+        <ul data-bind="foreach: filteredPlaces">
             <li data-bind="text: title"></li>
+            <!-- <li data-bind="text: address"></li> -->
         </ul>
     </header>
 

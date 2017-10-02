@@ -1,4 +1,5 @@
 var map;
+var marker;
 var markers = [];
 
 
@@ -26,6 +27,9 @@ function initMap() {
         foursquareID: foursquareID
       });
       markers.push(marker);
+      
+      //connect marker on the map with viewModel
+      // Place()[i].marker = marker;
 
       marker.addListener('click', markerWindow);
       marker.addListener('click', toggleBounce);
@@ -33,13 +37,13 @@ function initMap() {
       bounds.extend(markers[i].position);
     }
 
-    //show infowindow when clicking on the marker
+    //open infowindow when the marker is clicked
     function markerWindow(){
       var marker = this;
       populateInfoWindow(this, largeInfowindow);
     }
 
-    //marker will bounce for 2s when clicked
+    //marker will bounce 2 times when clicked
     function toggleBounce(marker) {
       var self = this;
       self.setAnimation(google.maps.Animation.BOUNCE);
@@ -49,8 +53,6 @@ function initMap() {
     }
 
     map.fitBounds(bounds);
-
-    ko.applyBingings(new ViewModel());
 }
 
 
@@ -61,7 +63,7 @@ function initMap() {
 function populateInfoWindow(marker, infowindow) {
   if (infowindow.marker != marker) {
     infowindow.marker = marker;
-    infowindow.setContent('');
+    // infowindow.setContent('');
     infowindow.open(map, marker);
 
     //marker will stop bouncing when infowindow is closed
@@ -99,24 +101,47 @@ mapError = function() {
   alert("The Google Maps API didn't load correctly. Please try again later.");
 };
 
-var Place = function (data){
+var place = function(data){
   this.title = ko.observable(data.title);
-  this.address = ko.observable(data.address);
-  this.lat = ko.observable(data.lat);
-  this.lng = ko.observable(data.lng);
-  this.marker = ko.observable();
-};
+  //address comes from foursquare; how to display it?
+  // this.results.location.address = ko.observable(data.results.location.address);
+  this.marker = ko.observable(data.marker);
+}
 
-var ViewModel = function(){
-  
-  this.filter = ko.observable('');
+var viewModel = function() {
+  this.query = ko.observable("");
+  this.places = ko.observableArray([]);
 
-  //show the list of all the places
-  this.visibleLocations = ko.observableArray();
+  locations.forEach(function(place){
+    this.places.push(place);
+  });
 
-  //infowindow will be show when clicked on the filtered result
-  this.showInfo = function(location) {
-    google.maps.event.trigger(location.marker, 'click');
+  this.filteredPlaces = ko.observableArray();
+
+  this.places().forEach(function(place){
+    this.filteredPlaces.push(place);
+  })
+
+  //when the place title in list view is clicked 
+  //it triggers the same action as if marker was clicked on
+  this.place.title = function(place, marker) {
+    google.maps.event.trigger(place.marker(), 'click');
   };
-  
+
+  this.filter = ko.computed(function(){
+    this.filteredPlaces.removeAll();
+
+    this.places().forEach(function(place){
+      place.marker().setVisible(false);
+      if (place.title().toLowerCase().indexOf(this.query().toLowerCase()) !== -1){
+        this.filteredPlaces.push(place);
+      }
+    });
+
+    this.filteredPlaces().forEach(function(place){
+      place.marker().setVisible(true);
+    });
+  });
 };
+
+ko.applyBindings(viewModel);
