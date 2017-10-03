@@ -55,7 +55,7 @@ function createMarker(data) {
       }, 1400);
     }
 
-    return marker
+    return marker;
 }
 
 
@@ -104,7 +104,7 @@ function populateInfoWindow(marker, infowindow) {
 
 mapError = function() {
   alert("The Google Maps API didn't load correctly. Please try again later.");
-}
+};
 
 
 // Place View Model
