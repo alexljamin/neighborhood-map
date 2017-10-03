@@ -11,33 +11,36 @@ function initMap() {
       zoomControl: true
     });
 
-    var largeInfowindow = new google.maps.InfoWindow();
+    ko.applyBindings(viewModel);
+
     var bounds = new google.maps.LatLngBounds();
+    markers.forEach(function(m){
+      bounds.extend(m.position);
+    });
 
-    for (i = 0; i < locations.length; i++){
-      var position = locations[i].location;
-      var title = locations[i].title;
-      var foursquareID = locations[i].foursquareID;
-      var marker = new google.maps.Marker({
-        map: map,
-        position: position,
-        title: title,
-        animation: google.maps.Animation.DROP,
-        id: i,
-        foursquareID: foursquareID
-      });
-      markers.push(marker);
-      
-      //connect marker on the map with viewModel
-      // Place()[i].marker = marker;
+    map.fitBounds(bounds);
+}
 
-      marker.addListener('click', markerWindow);
-      marker.addListener('click', toggleBounce);
 
-      bounds.extend(markers[i].position);
-    }
+function createMarker(data) {
+
+    var marker = new google.maps.Marker({
+      map: map,
+      position: data.location,
+      title: data.title,
+      animation: google.maps.Animation.DROP,
+      id: data.id,
+      foursquareID: data.foursquareID
+    });
+
+    markers.push(marker);
+
+    marker.addListener('click', markerWindow);
+    marker.addListener('click', toggleBounce);
+
 
     //open infowindow when the marker is clicked
+    var largeInfowindow = new google.maps.InfoWindow();
     function markerWindow(){
       var marker = this;
       populateInfoWindow(this, largeInfowindow);
@@ -52,9 +55,8 @@ function initMap() {
       }, 1400);
     }
 
-    map.fitBounds(bounds);
+    return marker
 }
-
 
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
@@ -70,6 +72,7 @@ function populateInfoWindow(marker, infowindow) {
     infowindow.addListener('closeclick',function(){
       marker.setAnimation(null);
     });
+
   }
 
   var foursquareID = marker.foursquareID;
@@ -97,51 +100,47 @@ function populateInfoWindow(marker, infowindow) {
   });
 }
 
+// createMarker().markerWindow();
+
 mapError = function() {
   alert("The Google Maps API didn't load correctly. Please try again later.");
-};
+}
 
-var place = function(data){
+
+// Place View Model
+var Place = function(data) {
   this.title = ko.observable(data.title);
   //address comes from foursquare; how to display it?
   // this.results.location.address = ko.observable(data.results.location.address);
-  this.marker = ko.observable(data.marker);
-}
+  this.marker = ko.observable(createMarker(data));
+};
 
+// Overall App ViewModel
 var viewModel = function() {
   this.query = ko.observable("");
   this.places = ko.observableArray([]);
 
-  locations.forEach(function(place){
-    this.places.push(place);
+  locations.forEach(function(data){
+    this.places.push(new Place(data));
   });
 
   this.filteredPlaces = ko.observableArray();
 
   this.places().forEach(function(place){
     this.filteredPlaces.push(place);
-  })
-
-  //when the place title in list view is clicked 
-  //it triggers the same action as if marker was clicked on
-  this.place.title = function(place, marker) {
-    google.maps.event.trigger(place.marker(), 'click');
-  };
+  });
 
   this.filter = ko.computed(function(){
     this.filteredPlaces.removeAll();
 
     this.places().forEach(function(place){
       place.marker().setVisible(false);
-      if (place.title().toLowerCase().indexOf(this.query().toLowerCase()) !== -1){
+      if (place.title().toLowerCase().indexOf(this.query().toLowerCase()) !== -1) {
         this.filteredPlaces.push(place);
+        place.marker().setVisible(true);
       }
     });
 
-    this.filteredPlaces().forEach(function(place){
-      place.marker().setVisible(true);
-    });
   });
-};
 
-ko.applyBindings(viewModel);
+};
