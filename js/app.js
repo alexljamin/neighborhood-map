@@ -1,6 +1,7 @@
 var map;
 var marker;
 var markers = [];
+var largeInfowindow;
 
 
 function initMap() {
@@ -11,7 +12,9 @@ function initMap() {
       zoomControl: true
     });
 
-    ko.applyBindings(viewModel);
+    largeInfowindow = new google.maps.InfoWindow();
+
+    ko.applyBindings(ViewModel);
 
     var bounds = new google.maps.LatLngBounds();
     markers.forEach(function(m){
@@ -20,7 +23,6 @@ function initMap() {
 
     map.fitBounds(bounds);
 }
-
 
 function createMarker(data) {
 
@@ -40,7 +42,7 @@ function createMarker(data) {
 
 
     //open infowindow when the marker is clicked
-    var largeInfowindow = new google.maps.InfoWindow();
+    
     function markerWindow(){
       var marker = this;
       populateInfoWindow(this, largeInfowindow);
@@ -65,7 +67,7 @@ function createMarker(data) {
 function populateInfoWindow(marker, infowindow) {
   if (infowindow.marker != marker) {
     infowindow.marker = marker;
-    // infowindow.setContent('');
+    infowindow.setContent('');
     infowindow.open(map, marker);
 
     //marker will stop bouncing when infowindow is closed
@@ -100,8 +102,6 @@ function populateInfoWindow(marker, infowindow) {
   });
 }
 
-// createMarker().markerWindow();
-
 mapError = function() {
   alert("The Google Maps API didn't load correctly. Please try again later.");
 };
@@ -110,19 +110,21 @@ mapError = function() {
 // Place View Model
 var Place = function(data) {
   this.title = ko.observable(data.title);
-  //address comes from foursquare; how to display it?
-  // this.results.location.address = ko.observable(data.results.location.address);
   this.marker = ko.observable(createMarker(data));
 };
 
 // Overall App ViewModel
-var viewModel = function() {
+var ViewModel = function() {
   this.query = ko.observable("");
   this.places = ko.observableArray([]);
 
   locations.forEach(function(data){
     this.places.push(new Place(data));
   });
+
+  this.clickOnVisiblePlace = function(place, marker){
+    google.maps.event.trigger(place.marker(), 'click');
+  };
 
   this.filteredPlaces = ko.observableArray();
 
